@@ -848,14 +848,14 @@
                         userAnswers[quizId] = {};
                     }
                     userAnswers[quizId][currentIndex] = selectedValue;
-                    if (questions[currentQuestionIndex[quizId]]) {
-                        if (parseInt(selectedOption.value) === questions[currentQuestionIndex[quizId]].answer) {
-                            scores[quizId]++;
-                        }
-                    } else {
-                        console.warn(`Attempted to process answer for non-existent question index ${currentQuestionIndex[quizId]} in quiz ${quizId}`);
-                        return;
-                    }
+                    // if (questions[currentQuestionIndex[quizId]]) {
+                    //   if (parseInt(selectedOption.value) === questions[currentQuestionIndex[quizId]].answer) {
+                    //     scores[quizId]++;
+                    // }
+                    //  } else {
+                    //     console.warn(`Attempted to process answer for non-existent question index ${currentQuestionIndex[quizId]} in quiz ${quizId}`);
+                    //     return;
+                    //  }
 
                     currentQuestionIndex[quizId]++;
 
@@ -886,6 +886,33 @@
                 const resultContainer = document.getElementById(`result-${quizId}`);
                 const questions = questionGroups[quizId];
                 const totalQuestions = questions.length;
+                const currentIndex = currentQuestionIndex[quizId]; // Index of the last question
+                const selectedOption = document.querySelector(`input[name="option-${quizId}"]:checked`);
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (!userAnswers[quizId]) {
+                        userAnswers[quizId] = {};
+                    }
+                    userAnswers[quizId][currentIndex] = selectedValue; // Store the last answer
+                } else {
+                    // Optional: Handle if user clicks submit without selecting last answer
+                    alert('Please select an answer for the final question before submitting.');
+                    return; // Stop submission
+                    // Or record it as unanswered:
+                    // if (!userAnswers[quizId]) { userAnswers[quizId] = {}; }
+                    // userAnswers[quizId][currentIndex] = null; // Indicate unanswered
+                }
+                // --- END: Add logic to capture the last answer ---
+
+                // --- START: Calculate final score ---
+                scores[quizId] = 0; // Reset score before recalculating
+                for (let i = 0; i < totalQuestions; i++) {
+                    // Check if an answer was stored for this question and if it's correct
+                    if (userAnswers[quizId] && userAnswers[quizId][i] !== undefined && userAnswers[quizId][i] === questions[i].answer) {
+                        scores[quizId]++;
+                    }
+                }
+
 
                 let resultHTML = `<h2>Quiz Complete!</h2>`;
                 resultHTML += `<p>You scored ${scores[quizId]} out of ${totalQuestions}.</p>`;
@@ -914,12 +941,13 @@
                     }
                 }
 
-                if (incorrectCount === 0) {
+                if (scores[quizId] === totalQuestions) { // Check if score is perfect
                     resultHTML += '<p style="color: green; font-weight: bold;">Congratulations! You got all answers correct!</p>';
-                } else {
+                } else if (incorrectCount > 0) { // Only add the list if there were incorrect answers
                     incorrectAnswersHTML += '</ul>';
                     resultHTML += incorrectAnswersHTML;
                 }
+
                 resultContainer.style.display = 'block';
                 resultContainer.innerHTML = resultHTML;
 
