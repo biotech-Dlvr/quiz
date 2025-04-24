@@ -90,18 +90,12 @@
 
         #banner {
             padding: 100px 20px;
-            /* Use more balanced padding */
             height: auto;
-            /* Let content influence height */
             min-height: 60vh;
-            /* Set a minimum height */
             display: flex;
-            /* Use flexbox for centering */
             justify-content: center;
             align-items: center;
             text-align: center;
-            /* Center text inside container */
-            /* Keep background styles */
             background-image: linear-gradient(to top, rgba(46, 49, 65, 0), rgba(46, 49, 65, 0)), url(quiz4.jpeg);
             background-size: cover;
             background-attachment: fixed;
@@ -762,11 +756,10 @@
             const questions = questionGroups[quizId];
             const currentIndex = currentQuestionIndex[quizId];
             const totalQuestions = questions.length;
-
             const prevButton = document.querySelector(`.prev-question[data-quiz-id="${quizId}"]`);
             const nextButton = document.querySelector(`.next-question[data-quiz-id="${quizId}"]`);
             const submitButton = document.querySelector(`.submit-quiz[data-quiz-id="${quizId}"]`);
-            const restartButton = document.querySelector(`.restart-quiz[data-quiz-id="${quizId}"]`); // Added restart
+            const restartButton = document.querySelector(`.restart-quiz[data-quiz-id="${quizId}"]`);
             const quizContent = document.getElementById(`quiz-${quizId}`);
             const resultContainer = document.getElementById(`result-${quizId}`);
 
