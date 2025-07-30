@@ -796,9 +796,18 @@
                 }
             }
         }
+        
+        function saveAnswer(quizId, questionIndex, selectedOptionIndex) {
+  if (!userAnswers[quizId]) {
+    userAnswers[quizId] = [];
+  }
+  userAnswers[quizId][questionIndex] = selectedOptionIndex;
+}
+
 
         function loadQuestion(quizId) {
             const quizContent = document.getElementById(`quiz-${quizId}`);
+            const currentIndex = currentQuestionIndex[quizId];
 
             if (!quizContent) {
                 console.error(`Quiz content area 'quiz-${quizId}' not found.`);
@@ -825,6 +834,16 @@
                 input.type = 'radio';
                 input.name = `option-${quizId}`;
                 input.value = index;
+                if (
+      userAnswers[quizId] &&
+      userAnswers[quizId][currentIndex] !== undefined &&
+      userAnswers[quizId][currentIndex] === index
+    ) {
+      input.checked = true;
+    }
+                input.addEventListener('change', () => {
+      saveAnswer(quizId, currentIndex, index);
+    });
                 label.appendChild(input);
                 label.appendChild(document.createTextNode(` ${option}`));
                 li.appendChild(label);
@@ -870,7 +889,7 @@
                 }
             });
         });
-
+ 
         document.querySelectorAll('.submit-quiz').forEach(button => {
             button.addEventListener('click', (e) => {
                 const quizId = parseInt(e.target.getAttribute('data-quiz-id'));
@@ -887,7 +906,7 @@
                     userAnswers[quizId][currentIndex] = selectedValue;
                 } else {
                     alert('Please select an answer for the final question before submitting.');
-                    return; // Stop submission
+                    return; 
                 }
 
                 scores[quizId] = 0;
